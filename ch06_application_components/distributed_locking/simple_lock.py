@@ -32,7 +32,6 @@ class SimpleLock:
 			try:
 				pipeline.watch(lockkey)
 				lockvaluesaved = pipeline.get(lockkey)
-				print('release:', lockkey, lockvalue, lockvaluesaved)
 				if pipeline.get(lockkey).decode('utf-8') == lockvalue:
 					pipeline.multi()
 					pipeline.delete(lockkey)
@@ -43,6 +42,11 @@ class SimpleLock:
 			except redis.exceptions.WatchError:
 				pass
 		return False # Lost the lock
+
+
+class MarketplaceSim(SimpleLock):
+	def __init__(self):
+		super().__init__()
 
 	@staticmethod
 	def get_lock_key(lockname):
