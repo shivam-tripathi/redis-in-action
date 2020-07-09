@@ -1,16 +1,15 @@
 import redis
 import uuid
 import time
+from src.redis_conn import Redis
 
 class TimeoutLock:
-	def __init__(self):
+	def __init__(self, conn = Redis().conn):
 		self.conn = redis.Redis()
-
 
 	@staticmethod
 	def get_lock_key(lockname):
 		return f'lock:{lockname}'
-
 
 	def acquire_lock_with_timeout(self, lockname, acquire_timeout, lock_timeout):
 		identifier = uuid.uuid4()
