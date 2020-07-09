@@ -19,23 +19,26 @@ class SimpleLock:
 		identifier = str(uuid.uuid4())
 		end = time.time() + acquire_timeout
 		while time.time() < end:
-			if self.conn.setnx(get_lock_key(lockname, identifier):
+			acq = self.conn.setnx(self.get_lock_key(lockname), identifier)
+			if acq:
 				return identifier
 			time.sleep(.001)
 		return False
 
 	def release_lock(self, lockname, lockvalue):
 		pipeline = self.conn.pipeline(True)
-		lockkey = get_lock_key(lockname)
+		lockkey = self.get_lock_key(lockname)
 		while True:
 			try:
 				pipeline.watch(lockkey)
-				if pipeline.get(lockkey) == lockvalue:
+				lockvaluesaved = pipeline.get(lockkey)
+				print('release:', lockkey, lockvalue, lockvaluesaved)
+				if pipeline.get(lockkey).decode('utf-8') == lockvalue:
 					pipeline.multi()
-					pipe.delete(lockkey)
-					pipe.execute()
+					pipeline.delete(lockkey)
+					pipeline.execute()
 					return True # Lock consistent, released successfully
-				pipeline.unwatch(lockkey)
+				pipeline.unwatch()
 				break
 			except redis.exceptions.WatchError:
 				pass
@@ -69,13 +72,16 @@ class SimpleLock:
 		market = self.get_market_key();
 		end = time.time() + 30
 
-		locked = acquire_lock(market, 30)
+		# print(buyer, seller, item, buyer_inventory, market, end)
+
+		locked = self.acquire_lock(market, 30)
 		if not locked:
 			return False
 
 		pipeline = self.conn.pipeline(True)
 		try:
 			while time.time() < end:
+				print (time.time(), end)
 				try:
 					pipeline.watch(buyer)
 					pipeline.multi()
@@ -96,6 +102,6 @@ class SimpleLock:
 					pipeline.unwatch() # required?
 					return True
 				except redis.exceptions.WatchError:
-            		pass
+					pass
 		finally:
-			release_lock(market, locked)
+			self.release_lock(market, locked)
