@@ -1,8 +1,8 @@
-import redis
+from src.redis_conn import Redis
 
 class RecentContactAc:
-	def __init__(self):
-		self.conn = redis.Redis(host='localhost', port=6379, db=0)
+	def __init__(self, conn = Redis().conn):
+		self.conn = conn
 
 	@staticmethod
 	def ac_list(user):

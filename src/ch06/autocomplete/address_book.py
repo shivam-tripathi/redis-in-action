@@ -1,12 +1,12 @@
-import redis
+from src.redis_conn import Redis
 import uuid
 
 class AddressBook:
 	# Ordered list of encoded characters: '`abcdefghijklmnopqrstuvwxyz{'
 	valid_characters = [chr(i) for i in range(ord('a') - 1, ord('z') + 2)]
 
-	def __init__(self):
-		self.conn = redis.Redis(host='localhost', port=6379, db=0)
+	def __init__(self, conn = Redis().conn):
+		self.conn = conn
 
 	def get_zset_name(self, guild):
 		return 'members:' + guild
