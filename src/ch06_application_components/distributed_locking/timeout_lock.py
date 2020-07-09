@@ -1,5 +1,6 @@
 import redis
 import uuid
+import time
 
 class TimeoutLock:
 	def __init__(self):
