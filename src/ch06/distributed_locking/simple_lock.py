@@ -1,6 +1,7 @@
 import redis
 import uuid
 import time
+from src.redis_conn import Redis
 
 class SimpleLock:
 
@@ -11,8 +12,8 @@ class SimpleLock:
 		- Inventory `inventory:{user_id}` set
 	'''
 
-	def __init__(self):
-		self.conn = redis.Redis()
+	def __init__(self, conn = Redis().conn):
+		self.conn = conn
 
 	# Try to acquire for 10 seconds before giving up and returning
 	def acquire_lock(self, lockname, acquire_timeout=10):
