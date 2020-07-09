@@ -45,9 +45,12 @@ class SimpleLock:
 		return False # Lost the lock
 
 
-class MarketplaceSim(SimpleLock):
+'''
+Market place simulator to demonstrate locks
+'''
+class MarketplaceSim():
 	def __init__(self):
-		super().__init__()
+		self.simple_lock = SimpleLock()
 
 	@staticmethod
 	def get_lock_key(lockname):
@@ -79,7 +82,7 @@ class MarketplaceSim(SimpleLock):
 
 		# print(buyer, seller, item, buyer_inventory, market, end)
 
-		locked = self.acquire_lock(market, 30)
+		locked = self.simple_lock.acquire_lock(market, 30)
 		if not locked:
 			return False
 
@@ -109,4 +112,4 @@ class MarketplaceSim(SimpleLock):
 				except redis.exceptions.WatchError:
 					pass
 		finally:
-			self.release_lock(market, locked)
+			self.simple_lock.release_lock(market, locked)
