@@ -24,9 +24,3 @@ class RecentContactAc:
 		ac_list = self.ac_list(user)
 		items = self.conn.lrange(ac_list, 0, -1)
 		return [item for item in items if item.decode('ascii').lower().startswith(prefix)]
-
-
-recent_contact = RecentContactAc()
-recent_contact.add_update_contact('shivam', 'siddhant')
-recent_contact.add_update_contact('shivam', 'pratibha')
-print(recent_contact.fetch_autocomplete_list('shivam', 's'))

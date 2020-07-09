@@ -54,7 +54,3 @@ class AddressBook:
 
 	def leave_guild(self, guild, user):
 		self.conn.zrem(get_zset_name(guild), user)
-
-
-address_book = AddressBook()
-print(address_book.find_prefix_range('aba'))
