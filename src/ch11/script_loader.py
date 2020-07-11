@@ -14,6 +14,7 @@ class ScriptLoader:
 
 	# keys will be checked if they are on the same server, will return error if not
 	def run(self, keys = [], args = [], force_eval = False):
+		print({ 'keys': keys, 'args': args })
 		if not force_eval:
 			try:
 				if not self.sha:
@@ -36,8 +37,9 @@ Allowed return types: bytes, string, int or float
 Lua value                         | What happens during conversion to Python (or Node)
 ----------------------------------------------------------------------------------------------------
 true                              | Turns into 1
-# false                             | Turns into None
-nil                               | Doesn’t turn into anything, and *stops remaining values in a table from being returned*
+# false                           | (Doesn't work with latest redis wrapper) Node -> Turns into None
+# nil                             | (Doesn't work with latest redis wrapper)
+                                  | Node -> *stops remaining values in a table from being returned*
 1.5 (or any other float)          | Fractional part is discarded, turning it into an integer
 1e30 (or any other large float)	  | Is turned into the minimum integer for your version of Python
 "strings"	                      | Unchanged
@@ -48,4 +50,7 @@ nil                               | Doesn’t turn into anything, and *stops rem
 '''
 SCRIPT KILL (read only, exceeded lua-time-limit)
 SHUTDOWN NOSAVE (write leading to inconsistent state - revert to last snapshot)
+
+Do not use keys in lua script which is not being sent in execute_command, else it will be
+incompatible with sharded cluster mode
 '''
