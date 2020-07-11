@@ -33,13 +33,12 @@ class LuaLock:
 
 		keys = [lock_key]
 		args = [lock_timeout, identifier]
-		print('\n\n\n', keys, args)
 		while time.time() < abort_timestamp:
-			ret = lock_cmd.run(keys = keys, args = args)
-			print(ret)
-			locked = ret == b'OK'
-			if locked:
+			if lock_cmd.run(keys = keys, args = args) == b'OK':
 				return identifier
 			time.sleep(0.01 * (not locked))
 		return None
 
+	def release_lua_lock(self, lock_name, identifier):
+		unlock_cmd = ScriptLoader(open('./src/ch11/lock/release_lock.lua').read())
+		return unlock_cmd.run(keys = [f'lock:{lock_name}'], args = [identifier])
